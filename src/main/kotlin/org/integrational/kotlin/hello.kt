@@ -18,5 +18,5 @@ class GreetingController {
     @GetMapping("/hello/{name}")
     fun hello(@PathVariable("name") name: String) = greeting(name)
 
-    private fun greeting(name: String) = Greeting(lastId.incrementAndGet(), name)
+    private fun greeting(name: String) = Greeting(lastId.incrementAndGet(), "Hello $name")
 }
