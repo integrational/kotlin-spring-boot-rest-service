@@ -1,2 +1,5 @@
-curl -i http://localhost:8080/hello
-curl -i http://localhost:8080/hello/Gerald
+curl -i http://localhost:8080/greetings
+curl -i http://localhost:8080/greetings/
+curl -i http://localhost:8080/greetings/Gerald
+curl -i http://localhost:8080/greetings -H 'Content-Type: application/json' -d '{"name":"Gerald"}'
+curl -i http://localhost:8080/greetings/Gerald
