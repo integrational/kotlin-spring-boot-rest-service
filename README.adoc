@@ -1,0 +1,7 @@
+= Kotlin JVM Spring Boot REST API Implementation
+
+* written in Kotlin for the JVM
+* using Spring Boot and common Spring Boot starters
+* exposes a REST API defined by a Kotlin interface with Spring Web annotations
+* Gradle build using Kotlin DSL
+* targeting Java 11
