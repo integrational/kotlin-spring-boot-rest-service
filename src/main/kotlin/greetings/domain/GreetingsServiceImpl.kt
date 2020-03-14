@@ -1,30 +1,23 @@
 package greetings.domain
 
+import greetings.repo.GreetingEntity
+import greetings.repo.GreetingsRepo
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.concurrent.atomic.AtomicLong
 
 @Service
-class GreetingsServiceImpl : GreetingsService {
+class GreetingsServiceImpl(@Autowired val repo: GreetingsRepo) : GreetingsService {
+    override fun add(name: String) = greeting(repo.createOrUpdate(GreetingEntity(null, name, "Hello $name")))
+
+    override fun get(name: String) = repo.findByName(name).let {
+        if (it == null) null else greeting(it)
+    }
+
+    override fun getAll() = repo.findAll().map { greeting(it) }
+
     companion object {
-        private const val WORLD = "World"
+        private const val MISSING_ID = -1L;
+
+        private fun greeting(e: GreetingEntity): Greeting = Greeting(e?.id ?: MISSING_ID, e.message)
     }
-
-    private val lastId = AtomicLong()
-    private val greetings = mutableMapOf<String, Greeting>()
-
-    constructor() {
-        add(WORLD)
-    }
-
-    override fun add(name: String): Greeting {
-        val nameKey = name.toLowerCase()
-        if (nameKey !in greetings) {
-            greetings[nameKey] = Greeting(lastId.incrementAndGet(), "Hello $name")
-        }
-        return greetings.getValue(nameKey)
-    }
-
-    override fun get(name: String): Greeting? = greetings[name.toLowerCase()]
-
-    override fun getAll(): Collection<Greeting> = greetings.values
 }
