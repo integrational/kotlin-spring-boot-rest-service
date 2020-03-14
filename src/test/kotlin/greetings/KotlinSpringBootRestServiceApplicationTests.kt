@@ -1,4 +1,4 @@
-package org.integrational.kotlin
+package greetings
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

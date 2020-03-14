@@ -1,4 +1,4 @@
-package org.integrational.kotlin
+package greetings
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
