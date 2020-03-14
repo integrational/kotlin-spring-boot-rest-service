@@ -1,7 +1,9 @@
 package greetings.domain
 
+import org.springframework.stereotype.Service
 import java.util.concurrent.atomic.AtomicLong
 
+@Service
 class GreetingsServiceImpl : GreetingsService {
     companion object {
         private const val WORLD = "World"
