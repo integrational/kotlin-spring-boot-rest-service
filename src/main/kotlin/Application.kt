@@ -1,4 +1,4 @@
-package greetings
+package org.integrational.greetings
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

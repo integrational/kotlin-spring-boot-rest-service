@@ -1,6 +1,6 @@
-package greetings.restapi
+package org.integrational.greetings.restapi
 
-import greetings.domain.GreetingsService
+import org.integrational.greetings.domain.service.GreetingsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RestController
 

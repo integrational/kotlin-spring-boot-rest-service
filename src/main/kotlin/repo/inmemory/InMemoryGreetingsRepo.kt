@@ -1,5 +1,7 @@
-package greetings.repo
+package org.integrational.greetings.repo.inmemory
 
+import org.integrational.greetings.domain.repo.GreetingEntity
+import org.integrational.greetings.domain.repo.GreetingsRepo
 import org.springframework.stereotype.Repository
 import java.util.concurrent.atomic.AtomicLong
 
@@ -7,7 +9,10 @@ import java.util.concurrent.atomic.AtomicLong
 class InMemoryGreetingsRepo : GreetingsRepo {
     companion object {
         private const val WORLD_NAME = "World"
-        private val WORLD_KEY = key(WORLD_NAME)
+        private val WORLD_KEY =
+            key(
+                WORLD_NAME
+            )
 
         private fun key(name: String?): String = name?.toLowerCase() ?: WORLD_KEY
     }
@@ -17,7 +22,12 @@ class InMemoryGreetingsRepo : GreetingsRepo {
     private val idByName = mutableMapOf<String, Long>()
 
     init {
-        createOrUpdate(GreetingEntity(null, WORLD_NAME, "Hello $WORLD_NAME"))
+        createOrUpdate(
+            GreetingEntity(
+                null,
+                WORLD_NAME, "Hello $WORLD_NAME"
+            )
+        )
     }
 
     /**
@@ -30,7 +40,9 @@ class InMemoryGreetingsRepo : GreetingsRepo {
                 // create new entity with a newly assigned id
                 // no other entity must have that name
                 findByName(name).let {
-                    if (it != null) throw DuplicateNameException(name)
+                    if (it != null) throw DuplicateNameException(
+                        name
+                    )
                 }
                 // use new id
                 lastId.incrementAndGet()
@@ -38,7 +50,9 @@ class InMemoryGreetingsRepo : GreetingsRepo {
                 // update the existing entity with the given id
                 // no other entity must have that name, unless it's the entity being updated
                 findByName(name).let {
-                    if (it != null && it.id != id) throw DuplicateNameException(name)
+                    if (it != null && it.id != id) throw DuplicateNameException(
+                        name
+                    )
                 }
                 // disassociate the entity's old name from its id
                 read(id).let {
@@ -70,7 +84,9 @@ class InMemoryGreetingsRepo : GreetingsRepo {
         }
     }
 
-    override fun findByName(name: String) = entityById[idByName[key(name)]]
+    override fun findByName(name: String) = entityById[idByName[key(
+        name
+    )]]
 
     override fun findAll() = entityById.values
 }

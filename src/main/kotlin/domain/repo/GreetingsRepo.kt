@@ -1,4 +1,4 @@
-package greetings.repo
+package org.integrational.greetings.domain.repo
 
 interface GreetingsRepo {
     fun createOrUpdate(entity: GreetingEntity): GreetingEntity

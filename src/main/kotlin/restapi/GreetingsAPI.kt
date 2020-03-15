@@ -1,6 +1,6 @@
-package greetings.restapi
+package org.integrational.greetings.restapi
 
-import greetings.domain.Greeting
+import org.integrational.greetings.domain.model.Greeting
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 

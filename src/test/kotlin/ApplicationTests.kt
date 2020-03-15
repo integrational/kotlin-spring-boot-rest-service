@@ -1,13 +1,13 @@
-package greetings
+package org.integrational.greetings
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class KotlinSpringBootRestServiceApplicationTests {
+class ApplicationTests {
 
-	@Test
-	fun contextLoads() {
-	}
+    @Test
+    fun contextLoads() {
+    }
 
 }
