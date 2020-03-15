@@ -1,94 +1,74 @@
 package org.integrational.greetings.repo.inmemory
 
-import org.integrational.greetings.domain.repo.GreetingEntity
+import org.integrational.greetings.domain.model.Greeting
 import org.integrational.greetings.domain.repo.GreetingsRepo
 import org.springframework.stereotype.Repository
 import java.util.concurrent.atomic.AtomicLong
 
 @Repository
-class InMemoryGreetingsRepo : GreetingsRepo {
+final class InMemoryGreetingsRepo : GreetingsRepo {
     companion object {
         private const val WORLD_NAME = "World"
-        private val WORLD_KEY =
-            key(
-                WORLD_NAME
-            )
+        private val WORLD_KEY = key(WORLD_NAME)
 
         private fun key(name: String?): String = name?.toLowerCase() ?: WORLD_KEY
+        private fun greeting(entity: GreetingEntity): Greeting = Greeting(entity.id, entity.name, entity.message)
     }
 
-    private val lastId = AtomicLong()
-    private val entityById = mutableMapOf<Long, GreetingEntity>()
-    private val idByName = mutableMapOf<String, Long>()
+    private val lastId = AtomicLong() // sequence generating primary key
+    private val entityById = mutableMapOf<Long, GreetingEntity>() // primary repo
+    private val idByName = mutableMapOf<String, Long>() // index for unique key 'name'
 
     init {
-        createOrUpdate(
-            GreetingEntity(
-                null,
-                WORLD_NAME, "Hello $WORLD_NAME"
-            )
-        )
+        create(Greeting(null, WORLD_NAME, "Hello $WORLD_NAME"))
     }
 
-    /**
-     * @throws DuplicateNameException
-     */
-    override fun createOrUpdate(entity: GreetingEntity): GreetingEntity = synchronized(this) {
-        val name = entity.name
-        val id = entity.id.let { id ->
-            if (id == null) {
-                // create new entity with a newly assigned id
-                // no other entity must have that name
-                findByName(name).let {
-                    if (it != null) throw DuplicateNameException(
-                        name
-                    )
-                }
-                // use new id
-                lastId.incrementAndGet()
-            } else {
-                // update the existing entity with the given id
-                // no other entity must have that name, unless it's the entity being updated
-                findByName(name).let {
-                    if (it != null && it.id != id) throw DuplicateNameException(
-                        name
-                    )
-                }
-                // disassociate the entity's old name from its id
-                read(id).let {
-                    if (it != null) idByName -= it.name
-                }
-                // use existing id
-                id
-            }
-        }
-        val e = GreetingEntity(id, entity.name, entity.message)
-        entityById[id] = e
+    override fun create(greeting: Greeting): Greeting = synchronized(this) {
+        if (greeting.id != null) throw IllegalArgumentException("id of Greeting to create must be null")
+
+        // no other entity must have that name
+        findByName(greeting.name)?.let { throw DuplicateNameException(greeting.name) }
+
+        // use new id
+        return storeAndTransform(lastId.incrementAndGet(), greeting.name, greeting.message)
+    }
+
+    override fun update(greeting: Greeting): Greeting = synchronized(this) {
+        if (greeting.id == null) throw IllegalArgumentException("id of Greeting to update must not be null")
+
+        // no other entity must have that name, unless it's the entity being updated
+        findByName(greeting.name)?.takeIf { it.id != greeting.id }?.let { throw DuplicateNameException(greeting.name) }
+
+        // disassociate the entity's old name from its id
+        read(greeting.id)?.let { idByName -= it.name }
+
+        // use existing id
+        return storeAndTransform(greeting.id, greeting.name, greeting.message)
+    }
+
+    private fun storeAndTransform(id: Long, name: String, message: String): Greeting {
+        val ge = GreetingEntity(id, name, message)
+        entityById[id] = ge
         idByName[name] = id
-        return e
+        return greeting(ge)
     }
 
-    override fun read(id: Long) = entityById[id]
+    override fun read(id: Long) = entityById[id]?.let { greeting(it) }
 
     override fun delete(id: Long) = synchronized(this) {
-        read(id).let {
-            if (it == null) {
-                // not found
-                false
-            } else {
-                // found
-                entityById -= id
-                idByName -= it.name
-                true
-            }
-        }
+        read(id)?.let {
+            // found
+            entityById -= id
+            idByName -= it.name
+            true
+        } ?: false // not found
     }
 
-    override fun findByName(name: String) = entityById[idByName[key(
-        name
-    )]]
+    override fun findByName(name: String) = entityById[idByName[key(name)]]?.let { greeting(it) }
 
-    override fun findAll() = entityById.values
+    override fun findAll() = entityById.values.map { greeting(it) }
 }
 
 data class DuplicateNameException(val name: String) : Throwable("'$name' must be uique")
+
+private data class GreetingEntity(val id: Long?, val name: String, val message: String)
