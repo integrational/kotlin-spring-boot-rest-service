@@ -9,15 +9,15 @@ import java.util.concurrent.atomic.AtomicLong
 final class InMemoryGreetingsRepo : GreetingsRepo {
     companion object {
         private const val WORLD_NAME = "World"
-        private val WORLD_KEY = key(WORLD_NAME)
+        private val WORLD_KEY = nameKey(WORLD_NAME)
 
-        private fun key(name: String?): String = name?.toLowerCase() ?: WORLD_KEY
-        private fun greeting(entity: GreetingEntity): Greeting = Greeting(entity.id, entity.name, entity.message)
+        private fun nameKey(name: String?): String = name?.toLowerCase() ?: WORLD_KEY
+        private fun greeting(entity: GreetingEntity) = Greeting(entity.id, entity.name, entity.message)
     }
 
     private val lastId = AtomicLong() // sequence generating primary key
     private val entityById = mutableMapOf<Long, GreetingEntity>() // primary repo
-    private val idByName = mutableMapOf<String, Long>() // index for unique key 'name'
+    private val idByNameKey = mutableMapOf<String, Long>() // index for unique case-insensitive key 'name'
 
     init {
         create(Greeting(null, WORLD_NAME, "Hello $WORLD_NAME"))
@@ -30,7 +30,7 @@ final class InMemoryGreetingsRepo : GreetingsRepo {
         findByName(greeting.name)?.let { throw DuplicateNameException(greeting.name) }
 
         // use new id
-        return storeAndTransform(lastId.incrementAndGet(), greeting.name, greeting.message)
+        return store(greeting.copy(id = lastId.incrementAndGet()))
     }
 
     override fun update(greeting: Greeting): Greeting = synchronized(this) {
@@ -40,17 +40,19 @@ final class InMemoryGreetingsRepo : GreetingsRepo {
         findByName(greeting.name)?.takeIf { it.id != greeting.id }?.let { throw DuplicateNameException(greeting.name) }
 
         // disassociate the entity's old name from its id
-        read(greeting.id)?.let { idByName -= it.name }
+        read(greeting.id)?.let { idByNameKey -= nameKey(it.name) }
 
         // use existing id
-        return storeAndTransform(greeting.id, greeting.name, greeting.message)
+        return store(greeting)
     }
 
-    private fun storeAndTransform(id: Long, name: String, message: String): Greeting {
-        val ge = GreetingEntity(id, name, message)
-        entityById[id] = ge
-        idByName[name] = id
-        return greeting(ge)
+    private fun store(gr: Greeting): Greeting = synchronized(this) {
+        if (gr.id == null) throw IllegalArgumentException("id of Greeting to store must not be null")
+
+        val ge = GreetingEntity(gr.id, gr.name, gr.message)
+        entityById[ge.id] = ge
+        idByNameKey[nameKey(ge.name)] = ge.id
+        return gr
     }
 
     override fun read(id: Long) = entityById[id]?.let { greeting(it) }
@@ -59,16 +61,16 @@ final class InMemoryGreetingsRepo : GreetingsRepo {
         read(id)?.let {
             // found
             entityById -= id
-            idByName -= it.name
+            idByNameKey -= nameKey(it.name)
             true
         } ?: false // not found
     }
 
-    override fun findByName(name: String) = entityById[idByName[key(name)]]?.let { greeting(it) }
+    override fun findByName(name: String) = entityById[idByNameKey[nameKey(name)]]?.let { greeting(it) }
 
     override fun findAll() = entityById.values.map { greeting(it) }
 }
 
 data class DuplicateNameException(val name: String) : Throwable("'$name' must be uique")
 
-private data class GreetingEntity(val id: Long?, val name: String, val message: String)
+private data class GreetingEntity(val id: Long, val name: String, val message: String)

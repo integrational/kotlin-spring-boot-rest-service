@@ -29,9 +29,9 @@ interface GreetingsRepo {
     fun delete(id: Long): Boolean
     fun delete(greeting: Greeting): Boolean = greeting.id?.let { delete(it) } ?: false
 
-    /** Find by name, which is a unique key */
+    /** Find by name, which is a unique case-insensitive key. */
     fun findByName(name: String): Greeting?
 
-    /** Find all, in no particular order */
+    /** Find all, an return in no particular order. */
     fun findAll(): Collection<Greeting>
 }
