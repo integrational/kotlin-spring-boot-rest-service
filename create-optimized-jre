@@ -1,0 +1,9 @@
+# discover modules for app
+mods=$(jdeps --print-module-deps build/libs/kotlin-spring-boot-rest-service-*.jar)
+# add undiscovered modules
+mods="$mods,java.naming,java.desktop,java.management,java.security.jgss,java.instrument"
+# (re-)create optimized JRE with these modules only
+rm -rf optimized-jre
+jlink --add-modules "$mods" \
+      --no-header-files --no-man-pages --compress=2 --strip-debug \
+      --output optimized-jre
