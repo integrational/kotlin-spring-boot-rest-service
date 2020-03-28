@@ -1,1 +1,1 @@
-./optimized-jre/bin/java -jar build/libs/kotlin-spring-boot-rest-service-*.jar
+./optimized-jre/bin/java -jar build/libs/*.jar
