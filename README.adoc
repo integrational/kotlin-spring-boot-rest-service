@@ -14,3 +14,4 @@ The platform comprises all libraries/modules/packages that are by definition alw
 ** `java.base` (https://docs.oracle.com/en/java/javase/11/docs/api/java.base/module-summary.html)
 ** `java.logging` (https://docs.oracle.com/en/java/javase/11/docs/api/java.logging/module-summary.html)
 * Kotlin standard library for Common and JVM targets (https://kotlinlang.org/api/latest/jvm/stdlib/)
+* JSR-330 `javax.inject` so that `@Inject` is used instead of Spring's `@Autowired`

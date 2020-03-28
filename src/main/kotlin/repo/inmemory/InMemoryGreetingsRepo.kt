@@ -1,6 +1,7 @@
 package org.integrational.greetings.repo.inmemory
 
 import org.integrational.greetings.domain.model.Greeting
+import org.integrational.greetings.domain.repo.DuplicateNameException
 import org.integrational.greetings.domain.repo.GreetingsRepo
 import org.springframework.stereotype.Repository
 import java.util.concurrent.atomic.AtomicLong
@@ -70,7 +71,5 @@ final class InMemoryGreetingsRepo : GreetingsRepo {
 
     override fun findAll() = entityById.values.map { greeting(it) }
 }
-
-data class DuplicateNameException(val name: String) : Throwable("'$name' must be uique")
 
 private data class GreetingEntity(val id: Long, val name: String, val message: String)

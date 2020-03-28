@@ -1,7 +1,6 @@
 package org.integrational.greetings.domain.repo
 
 import org.integrational.greetings.domain.model.Greeting
-import org.integrational.greetings.repo.inmemory.DuplicateNameException
 
 interface GreetingsRepo {
     /**
@@ -35,3 +34,5 @@ interface GreetingsRepo {
     /** Find all, an return in no particular order. */
     fun findAll(): Collection<Greeting>
 }
+
+data class DuplicateNameException(val name: String) : Throwable("'$name' must be uique")
