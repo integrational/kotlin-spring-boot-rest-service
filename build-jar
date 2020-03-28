@@ -1,2 +1,2 @@
 # creates ./build/libs/kotlin-spring-boot-rest-service-*.jar
-./gradlew bootJar
+./gradlew test bootJar
