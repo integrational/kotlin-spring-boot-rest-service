@@ -1,7 +1,8 @@
 # discover modules for app
-mods=$(jdeps --print-module-deps build/libs/*.jar)
+(here=$(pwd); cd /tmp; jar xf $here/build/libs/*.jar) # unpack app in /tmp
+mods=$(jdeps --print-module-deps build/libs/*.jar /tmp/BOOT-INF/lib/spring-boot-*.jar)
 # add undiscovered modules
-mods="$mods,java.naming,java.desktop,java.management,java.security.jgss,java.instrument"
+mods="$mods,java.security.jgss,java.instrument"
 # (re-)create optimized JRE with these modules only
 rm -rf optimized-jre
 jlink --add-modules "$mods" \
