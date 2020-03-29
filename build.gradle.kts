@@ -4,14 +4,17 @@ plugins {
     val kotlinVersion = "1.3.71"
 
     kotlin("jvm") version kotlinVersion
-    kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion // makes classes with Spring annotations open
+    kotlin("plugin.jpa") version kotlinVersion // adds no-arg constructor to classes with JPA annotations
 
     id("org.springframework.boot") version "2.2.6.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
 }
 
 val javaVersion = JavaVersion.VERSION_11
+
 val bootGrp = "org.springframework.boot"
+val kotlinGrp = "org.jetbrains.kotlin"
 
 group = "org.integrational"
 version = "0.0.1-SNAPSHOT"
@@ -23,15 +26,18 @@ repositories {
 }
 
 dependencies {
+    implementation(group = kotlinGrp, name = "kotlin-reflect")
+    implementation(group = kotlinGrp, name = "kotlin-stdlib-jdk8")
+
     implementation(group = bootGrp, name = "spring-boot-starter-web") {
         exclude(group = bootGrp, module = "spring-boot-starter-tomcat")
     }
-    implementation(group = bootGrp, name = "spring-boot-starter-jetty")
+    implementation(group = bootGrp, name = "spring-boot-starter-jetty") // Jetty instead of Tomcat
     implementation(group = bootGrp, name = "spring-boot-starter-actuator")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin")
     implementation(group = "javax.inject", name = "javax.inject", version = "1") // JSR-330 @Inject
+
     testImplementation(group = bootGrp, name = "spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
