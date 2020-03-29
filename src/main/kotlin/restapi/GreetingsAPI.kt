@@ -17,3 +17,5 @@ interface GreetingsAPI {
 }
 
 data class GreetingToAdd(val name: String)
+
+data class ErrorResponse(val message: String)
