@@ -26,20 +26,20 @@ repositories {
 }
 
 dependencies {
-    implementation(group = kotlinGrp, name = "kotlin-reflect")
-    implementation(group = kotlinGrp, name = "kotlin-stdlib-jdk8")
+    implementation(kotlinGrp, "kotlin-reflect")
+    implementation(kotlinGrp, "kotlin-stdlib-jdk8")
 
-    implementation(group = bootGrp, name = "spring-boot-starter-web") {
-        exclude(group = bootGrp, module = "spring-boot-starter-tomcat")
+    implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
+    implementation("javax.inject", "javax.inject", "1") // JSR-330 @Inject
+
+    implementation(bootGrp, "spring-boot-starter-web") {
+        exclude(bootGrp, "spring-boot-starter-tomcat")
     }
-    implementation(group = bootGrp, name = "spring-boot-starter-jetty") // Jetty instead of Tomcat
-    implementation(group = bootGrp, name = "spring-boot-starter-actuator")
+    implementation(bootGrp, "spring-boot-starter-jetty") // Jetty instead of Tomcat
+    implementation(bootGrp, "spring-boot-starter-actuator")
 
-    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin")
-    implementation(group = "javax.inject", name = "javax.inject", version = "1") // JSR-330 @Inject
-
-    testImplementation(group = bootGrp, name = "spring-boot-starter-test") {
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    testImplementation(bootGrp, "spring-boot-starter-test") {
+        exclude("org.junit.vintage", "junit-vintage-engine")
     }
 }
 
