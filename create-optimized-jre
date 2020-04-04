@@ -1,7 +1,7 @@
 # discover modules for app
 (here=$(pwd); cd /tmp; jar xf $here/build/libs/*.jar) # unpack app in /tmp
 mods=$(jdeps --print-module-deps build/libs/*.jar /tmp/BOOT-INF/lib/spring-boot-*.jar)
-# add undiscovered modules
+# add undiscovered but required modules (determined by eliminating all NoClassDefFoundError)
 mods="$mods,java.security.jgss,java.instrument"
 # (re-)create optimized JRE with these modules only
 rm -rf optimized-jre
