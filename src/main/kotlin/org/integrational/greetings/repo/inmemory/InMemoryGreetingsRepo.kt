@@ -3,11 +3,16 @@ package org.integrational.greetings.repo.inmemory
 import org.integrational.greetings.domain.model.Greeting
 import org.integrational.greetings.domain.repo.DuplicateNameException
 import org.integrational.greetings.domain.repo.GreetingsRepo
-import org.springframework.stereotype.Repository
 import java.util.concurrent.atomic.AtomicLong
+import javax.inject.Named
+import javax.inject.Singleton
 
-@Repository
-final class InMemoryGreetingsRepo : GreetingsRepo {
+/**
+ * [GreetingsRepo] repository implementation ("driven adapter") that persists [Greeting]s in memory.
+ */
+@Named
+@Singleton
+class InMemoryGreetingsRepo : GreetingsRepo {
     companion object {
         private const val WORLD_NAME = "World"
         private val WORLD_KEY = nameKey(WORLD_NAME)
