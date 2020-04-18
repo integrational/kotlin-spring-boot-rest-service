@@ -1,0 +1,7 @@
+# tell Actuator to use liveness and readiness probes
+# in order to expose the corresponding endpoints
+management.endpoint.health.group:
+  liveness:
+    include: ping
+  readiness:
+    include: ping # TODO
