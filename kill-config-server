@@ -1,0 +1,3 @@
+APP=spring-cloud-config-server
+
+docker kill $APP

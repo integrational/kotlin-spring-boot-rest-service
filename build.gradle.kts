@@ -11,10 +11,18 @@ plugins {
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
 }
 
+val cloudVersion = "Hoxton.SR3"
 val javaVersion = JavaVersion.VERSION_11
 
-val bootGrp = "org.springframework.boot"
+// dependency groups
 val kotlinGrp = "org.jetbrains.kotlin"
+val bootGrp = "org.springframework.boot"
+val cloudGrp = "org.springframework.cloud"
+val secGrp = "org.springframework.security"
+
+// dependency names
+val bootStarter = "spring-boot-starter"
+val cloudStarter = "spring-cloud-starter"
 
 group = "org.integrational"
 version = "0.0.1-SNAPSHOT"
@@ -25,20 +33,30 @@ repositories {
     mavenCentral() // for Spring Boot BOM
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("$cloudGrp:spring-cloud-dependencies:$cloudVersion")
+    }
+}
+
 dependencies {
     implementation(kotlinGrp, "kotlin-reflect")
     implementation(kotlinGrp, "kotlin-stdlib-jdk8")
 
     implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
-    implementation("javax.inject", "javax.inject", "1") // JSR-330 @Inject
+    implementation("javax.inject", "javax.inject", "1") // JSR-330: @Inject, @Singleton, @Named, ...
 
-    implementation(bootGrp, "spring-boot-starter-web") {
-        exclude(bootGrp, "spring-boot-starter-tomcat")
+    implementation(bootGrp, "$bootStarter-web") {
+        exclude(bootGrp, "$bootStarter-tomcat")
     }
-    implementation(bootGrp, "spring-boot-starter-jetty") // Jetty instead of Tomcat
-    implementation(bootGrp, "spring-boot-starter-actuator")
+    runtimeOnly(bootGrp, "$bootStarter-jetty") // Jetty instead of Tomcat
+    implementation(bootGrp, "$bootStarter-actuator")
 
-    testImplementation(bootGrp, "spring-boot-starter-test") {
+    // Spring Cloud and related
+    implementation(cloudGrp, "$cloudStarter-config")
+    runtimeOnly(secGrp, "spring-security-rsa") // encrypted props
+
+    testImplementation(bootGrp, "$bootStarter-test") {
         exclude("org.junit.vintage", "junit-vintage-engine")
     }
 }

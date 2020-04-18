@@ -1,0 +1,10 @@
+APP=spring-cloud-config-server
+
+CONF_DIR=$(pwd)/src/config
+
+# use filesystem storage as the backend
+docker run --rm --name $APP -d      \
+  -p 8888:8888                      \
+  -v $CONF_DIR:/config              \
+  -e SPRING_PROFILES_ACTIVE=native  \
+  hyness/spring-cloud-config-server
