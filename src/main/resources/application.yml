@@ -5,3 +5,8 @@ management.endpoint.health.group:
     include: ping
   readiness:
     include: ping # TODO
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false

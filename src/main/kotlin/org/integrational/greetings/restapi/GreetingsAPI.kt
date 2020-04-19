@@ -1,12 +1,12 @@
 package org.integrational.greetings.restapi
 
 import org.integrational.greetings.domain.model.Greeting
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/greetings", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/greetings", produces = [APPLICATION_JSON_VALUE])
 interface GreetingsAPI {
-    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [APPLICATION_JSON_VALUE])
     fun add(@RequestBody toAdd: GreetingToAdd): Greeting
 
     @GetMapping("/{name}")

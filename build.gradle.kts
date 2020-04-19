@@ -45,15 +45,24 @@ dependencies {
 
     implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
     implementation("javax.inject", "javax.inject", "1") // JSR-330: @Inject, @Singleton, @Named, ...
+    //implementation("javax.ws.rs", "javax.ws.rs-api", "2.1") // JSR-311 JAX-RS
 
+    // either the Spring MVC programming model
     implementation(bootGrp, "$bootStarter-web") {
         exclude(bootGrp, "$bootStarter-tomcat")
     }
     runtimeOnly(bootGrp, "$bootStarter-jetty") // Jetty instead of Tomcat
+    // or the JAX-RS programming model
+    //implementation(bootGrp, "$bootStarter-jersey") // JAX-RS instead of Spring MVC annotations
+
     implementation(bootGrp, "$bootStarter-actuator")
 
     // Spring Cloud and related
     implementation(cloudGrp, "$cloudStarter-config")
+    implementation(cloudGrp, "$cloudStarter-openfeign")
+    //implementation("io.github.openfeign", "feign-jaxrs") {
+    //    exclude("javax.ws.rs", "jsr311-api") // use JAX-RS 2.1 instead
+    //}
     runtimeOnly(secGrp, "spring-security-rsa") // encrypted props
 
     testImplementation(bootGrp, "$bootStarter-test") {

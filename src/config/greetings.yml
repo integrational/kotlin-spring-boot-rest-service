@@ -1,2 +1,5 @@
 app: greetings
 env: default
+
+genderAPI:
+  token: 7361131d214da2c7483cf575ce498527001be6252e58aa946057d93cacb92454
